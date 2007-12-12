@@ -165,6 +165,44 @@ public class DatabaseManager extends DatabaseConnector implements DatabaseReader
 		return null;
 	}
 
+	/**
+	 * This method looks up a student's name, given their UNI
+	 */
+	public String getStudentName(String uni)
+	{
+		try
+		{
+			con = getConnection();
+			
+			if (con != null)
+			{
+				// create a Statement
+				Statement stmt = con.createStatement();
+				
+				// now create the SQL query
+				String query = "SELECT name FROM students WHERE uni = '" + uni + "'";
+				
+				// execute the query
+				ResultSet rs = stmt.executeQuery(query);
+				//System.out.println("Executed " + query);
+				
+				if (rs.next())
+				{
+					return rs.getString("name");
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			closeConnection();
+		}
+		return null;
+		
+	}
 
 	/**
 	 * This method returns the list of all assignment IDs.
@@ -258,10 +296,7 @@ public class DatabaseManager extends DatabaseConnector implements DatabaseReader
 				// String query = "INSERT INTO compilation_errors (student, assignment, date, error, message) VALUES ('" + e.getUser() + "', '" + assignment + "', '" + e.getTime() + "', '" + e.getError() + "', '" + e.getMessage() + "')";
 				
 				stmt.setString(1, e.getUser());
-				
-				// TODO: what if we don't know the assignment number??
-				stmt.setString(2, e.getAssignment().equals("unknown") ? "1" : e.getAssignment());
-				
+				stmt.setString(2, e.getAssignment());
 				stmt.setString(3, e.getTime());
 				stmt.setString(4, e.getError());
 				stmt.setString(5, e.getMessage());
@@ -305,10 +340,8 @@ public class DatabaseManager extends DatabaseConnector implements DatabaseReader
 				
 				// now create the SQL query
 				String success = e.isSuccessful() ? "TRUE" : "FALSE";
-				// TODO: how do we get the assignment?
-				String assignment = e.getAssignment().equals("unknown") ? "1" : e.getAssignment();
 
-				String query = "INSERT INTO compilations (student, assignment, date, success) VALUES ('" + e.getUser() + "', '" + assignment + "', '" + e.getTime() + "', '" + success + "')";
+				String query = "INSERT INTO compilations (student, assignment, date, success) VALUES ('" + e.getUser() + "', '" + e.getAssignment() + "', '" + e.getTime() + "', '" + success + "')";
 				
 				// execute the query
 				stmt.executeUpdate(query);
@@ -348,11 +381,11 @@ public class DatabaseManager extends DatabaseConnector implements DatabaseReader
 				Statement stmt = con.createStatement();
 				
 				// now create the SQL query
-				String query = "SELECT date, error, message FROM compilation_errors WHERE student = '" + user + "' AND assignment = '" + assignment + "' ORDER BY assignment";
+				String query = "SELECT date, error, message FROM compilation_errors WHERE student = '" + user + "' AND assignment = '" + assignment + "' ORDER BY date";
 				
 				// execute the query
 				ResultSet rs = stmt.executeQuery(query);
-				// System.out.println("Executed " + query);
+				//System.out.println("Executed " + query);
 				
 				// we can't actually know the size of the ResultSet in advance
 				// so we can't create an array... yet

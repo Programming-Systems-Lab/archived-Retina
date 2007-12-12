@@ -10,32 +10,39 @@ import java.io.*;
 import java.net.*;
 import java.util.Scanner;
 
-public class XmlServer
+
+public class XmlServer extends Thread
 {
     // the output stream for writing the file
     private PrintWriter out;
 
     // the input stream for reading from the network
-    private Scanner in;
+    private Scanner in; 
 
     // the server
     private ServerSocket server;
 
     // the tool for writing to the database
-    private XMLLoader reader = new XMLLoader();
+    private XMLLoader loader;
+    
+    // used for sending messages
+    private MessageSender sender;
 
     /* This is the main method for starting the Server */
     public static void main(String[] args)
     {
-		if (args.length < 1)
+    	int port = 1234;
+		if (args.length >= 1)
 		{
-		    System.out.println("Please specify a port number!");
-		    System.exit(0);
+			port = Integer.parseInt(args[0]);
+		}
+		else
+		{
+			System.out.println("Port not specified, using " + port + " as default");
 		}
 
-		int port = Integer.parseInt(args[0]);
 		XmlServer xs = new XmlServer(port);
-		xs.run();
+		xs.start();
     }
 
     /**
@@ -44,10 +51,24 @@ public class XmlServer
      */
     public XmlServer(int port)
     {
+    	sender = new MessageSender();
+    	loader = new XMLLoader(sender);
+    	init(port);
+    }
+
+    public XmlServer(int port, MessageSender ms)
+    {
+    	sender = ms;
+    	loader = new XMLLoader(sender);
+    	init(port);
+    }
+
+    private void init(int port)
+    {
 		try
 		{
 		    server = new ServerSocket(port);
-		    System.out.println("Server started... waiting for connection");
+		    System.out.println("XmlServer started... waiting for connection");
 		}
 		catch (Exception e)
 		{
@@ -55,7 +76,8 @@ public class XmlServer
 		    e.printStackTrace();
 		}
     }
-
+    
+    
     /**
      * This method does all the work
      */
@@ -68,14 +90,14 @@ public class XmlServer
     		{
     			// wait for a client
     			Socket socket = server.accept();
-    			System.out.println("Connection established");
+    			//System.out.println("Connection established");
 
     			// get the input stream
     			in = new Scanner(socket.getInputStream());
 
     			// the name of the file should be on the first line
     			String fileName = "_" + in.nextLine();
-    			System.out.println("File is " + fileName);
+    			//System.out.println("File is " + fileName);
 
     			// create the File object
     			File file = new File(fileName);
@@ -109,7 +131,7 @@ public class XmlServer
     			}
 		    
     			// we have the file, now write it to the database using the "XMLLoader"
-    			reader.readAndLoad(fileName);
+    			loader.readAndLoad(fileName);
     		}
     		catch (Exception e)
     		{

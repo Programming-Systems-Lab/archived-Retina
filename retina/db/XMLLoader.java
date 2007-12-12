@@ -19,8 +19,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import retina.common.CompilationErrorEvent;
-import retina.common.CompilationEvent;
+import retina.common.CompilationErrorEvent; 
+import retina.common.CompilationEvent; 
 
 public class XMLLoader {
 
@@ -32,14 +32,26 @@ public class XMLLoader {
 
 	// the utility we'll use for writing to the database
 	private DatabaseWriter mgr = new DatabaseManager();
+	
+	// used for sending messages
+	private MessageSender sender;
 
+	public XMLLoader()
+	{
+		sender = new MessageSender();
+	}
+	
+	public XMLLoader(MessageSender ms)
+	{
+		sender = ms;
+	}
 	
 	/**
 	 * This is the starting point for any other object that wants to use this one.
 	 * Specify the name of the file to read and then load into the database
 	 * @param file The full path to the file
 	 */
-	public void readAndLoad(String file) {
+	public void readAndLoad(String file) { 
 
 		// reset the list of events
 		events = new ArrayList<CompilationErrorEvent>();
@@ -57,6 +69,8 @@ public class XMLLoader {
 			//System.out.println("Inserted");
 		}
 
+		// now send a message to the student
+		sender.handleCompilationErrorEvents(events.toArray(new CompilationErrorEvent[events.size()]));
 
 	}
 
@@ -167,7 +181,7 @@ public class XMLLoader {
 		}
 
 		// get the assignment number
-		String assignment = "unknown";
+		String assignment = null;
 		NodeList nl3 = empEl.getElementsByTagName("assignment");
 		if(nl3 != null && nl3.getLength() > 0) {
 				Element e = (Element)nl3.item(0);
@@ -176,6 +190,8 @@ public class XMLLoader {
 				//System.out.println(assignment);
 		}
 
+		// TODO: how do we get the assignment?
+		if (assignment == null) assignment = "1";
 
 		// records whether or not this was a successful compilation
 		boolean success = true;

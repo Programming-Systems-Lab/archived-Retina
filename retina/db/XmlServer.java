@@ -13,12 +13,6 @@ import java.util.Scanner;
 
 public class XmlServer extends Thread
 {
-    // the output stream for writing the file
-    private PrintWriter out;
-
-    // the input stream for reading from the network
-    private Scanner in; 
-
     // the server
     private ServerSocket server;
 
@@ -90,24 +84,58 @@ public class XmlServer extends Thread
     		{
     			// wait for a client
     			Socket socket = server.accept();
-    			//System.out.println("Connection established");
+    			
+    			// spin off a new thread
+    			Handler h = new Handler(socket);
+    			h.start();
+    		}
+    		catch (Exception e)
+    		{
+    			e.printStackTrace();
+    		}
+    	}
+    }
+    
+    /**
+     * An inner class to do the work of reading the file and writing to the database and such
+     */
+    class Handler extends Thread
+    {
+    	Socket socket = null;
+    	
+    	Handler(Socket s)
+    	{
+    		socket = s;
+    	}
 
+    	public void run()
+    	{
+    	    // the output stream for writing the file
+    	    PrintWriter out = null;
+
+    	    // the input stream for reading from the network
+    	    Scanner in = null; 
+
+    	    try
+    		{
+    			//System.out.println("Connection established");
+    			
     			// get the input stream
     			in = new Scanner(socket.getInputStream());
 
     			// the name of the file should be on the first line
     			String fileName = "_" + in.nextLine();
     			//System.out.println("File is " + fileName);
-
+    			
     			// create the File object
     			File file = new File(fileName);
-
+    			
     			// create the PrintWriter to write to the file
     			out = new PrintWriter(file);
 
     			// flag to indicate whether we should keep reading
     			boolean keepGoing = true;
-
+    			
     			while (keepGoing)
     			{
     				// read the next line
@@ -118,7 +146,7 @@ public class XmlServer extends Thread
     				{
     					// echo it out
     					//System.out.println(line);
-
+    					
     					// write to the file
     					out.println(line);
     					out.flush();
@@ -129,7 +157,7 @@ public class XmlServer extends Thread
     					keepGoing = false;
     				}
     			}
-		    
+	    
     			// we have the file, now write it to the database using the "XMLLoader"
     			loader.readAndLoad(fileName);
     		}

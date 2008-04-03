@@ -1,35 +1,1 @@
-package retina.common;
-/***********************************************
- *
- * This class represents one compilation error recorded by the system.
- *
- ***********************************************/
-public class CompilationErrorEvent extends Event
-{
-	/**
-	 * The actual error represented by this event. Something like '; expected'. 
-	 */
-	private String error;
-	
-	/**
-	 * The message received by the compilation error. This would provide additional
-	 * information beyond just what the error itself is.
-	 */
-	private String message;
-	public CompilationErrorEvent(String user, String assignment, String time, String err, String msg)
-	{
-		super(user, assignment, time);
-		error = err;
-		message = msg;
-	}
-	public String getError()
-	{
-		return error;
-	}
-	
-	public String getMessage()
-	{
-		return message;
-	}
-	
-}
+package retina.common;/*********************************************** * * This class represents one compilation error recorded by the system. * ***********************************************/public class CompilationErrorEvent extends Event{	/**	 * The actual error represented by this event. Something like '; expected'. 	 */	private String error;		/**	 * The file in which the error occurred.	 */	private String file;		/**	 * The line number on which the error occurred.	 */	private String line;		/**	 * The message received by the compilation error. This would provide additional	 * information beyond just what the error itself is.	 */	private String message;	public CompilationErrorEvent(String user, String assignment, String time, String err, String msg, String fileName, String lineNum)	{		super(user, assignment, time);		error = err;		message = msg;		file = fileName;		line = lineNum;	}	public String getError()	{		return error;	}		public String getMessage()	{		return message;	}		public String getFile()	{		return file;	}		public String getLine()	{		return line;	}		public String toString()	{		return user + ":" + time + ":" + error;	}}

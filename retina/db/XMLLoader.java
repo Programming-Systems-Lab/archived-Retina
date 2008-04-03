@@ -21,6 +21,8 @@ import org.xml.sax.SAXException;
 
 import retina.common.CompilationErrorEvent; 
 import retina.common.CompilationEvent; 
+import retina.common.Logger;
+import retina.im.MessageSender;
 
 public class XMLLoader {
 
@@ -29,9 +31,6 @@ public class XMLLoader {
 
 	// the set of objects that need to be inserted into the database
 	private ArrayList<CompilationErrorEvent> events;
-
-	// the utility we'll use for writing to the database
-	private DatabaseWriter mgr = new DatabaseManager();
 	
 	// used for sending messages
 	private MessageSender sender;
@@ -63,14 +62,20 @@ public class XMLLoader {
 		parseDocument();
 
 		// now write all the compilation error events to the database
+		CompilationErrorEventManager mgr = new CompilationErrorEventManager();
 		for (CompilationErrorEvent event : events)
 		{
-			mgr.insertEvent(event);
-			//System.out.println("Inserted");
+			mgr.insertCompilationErrorEvent(event);
+			//System.out.println("Inserted " + event);
 		}
 
-		// now send a message to the student
-		sender.handleCompilationErrorEvents(events.toArray(new CompilationErrorEvent[events.size()]));
+		// now send a message to the student - temporarily disabled!
+		/*
+		if (events.size() > 0)
+		{
+			sender.handleCompilationErrorEvents(events.toArray(new CompilationErrorEvent[events.size()]));
+		}
+		*/
 
 	}
 
@@ -166,7 +171,7 @@ public class XMLLoader {
 				*/
 		}
 
-		String timeFormat = month + "-" + day + "-" + year.substring(2) + "-" + hour +":" + minutes +":"+ seconds;
+		String timeFormat = year + "-" + month + "-" + day + " " + hour +":" + minutes +":"+ seconds;
 		//System.out.println(timeFormat);
 
 
@@ -191,10 +196,10 @@ public class XMLLoader {
 		}
 
 		// TODO: how do we get the assignment?
-		if (assignment == null) assignment = "1";
+		if (assignment == null) assignment = "3";
 
-		// records whether or not this was a successful compilation
-		boolean success = true;
+		// tracks the number of errors made
+		int errors = 0;
 
 		nl = empEl.getElementsByTagName("measure");
 		if(nl != null && nl.getLength() > 0) {
@@ -205,21 +210,26 @@ public class XMLLoader {
 				if (error != null) error = error.trim();
 				String message = getTextValue(e, "message");
 				if (message != null) message = message.trim();
+				String file = getTextValue(e, "file");
+				if (file != null) file = file.trim();
+				String line = getTextValue(e, "line");
+				if (line != null) line = line.trim();
 
 				//System.out.println("error: " + error.trim());
 				//System.out.println("message: " + message.trim());
 
-				CompilationErrorEvent errComp = new CompilationErrorEvent(user, assignment, timeFormat, error, message);
+				CompilationErrorEvent errComp = new CompilationErrorEvent(user, assignment, timeFormat, error, message, file, line);
 				events.add(errComp);
 
-				success = false;
+				errors++;
 			}
 
 		}
 
 		// now record the fact that a compilation occurred
-		CompilationEvent ce = new CompilationEvent(user, assignment, timeFormat, success);
-		mgr.insertEvent(ce);
+		CompilationEvent ce = new CompilationEvent(user, assignment, timeFormat, errors);
+		new CompilationEventManager().insertCompilationEvent(ce);
+		if (Logger.isLogInfo()) Logger.logInfo("Inserted " + ce);
 
 	}
 
@@ -249,12 +259,13 @@ public class XMLLoader {
 	}
 
 
-	/* Only use this as a standalone method. It currently reads all files from a directory. */
+	/* Only use this as a standalone method. */
 	public static void main(String[] args)
 	{
-		/* 
+
 		// this is for reading one file at a time
-		String filename = null;
+		String filename = "..\\inbox\\_mja2128-PrimeNumber.java-02-12-02-03-00.xml";
+		/*
 		if (args.length == 0)
 		{
 			System.out.println("Please specify an XML file to read.");
@@ -264,6 +275,25 @@ public class XMLLoader {
 		else
 			filename = args[0];
 		 */
+		
+		try
+		{
+			//create an instance
+			XMLLoader loader = new XMLLoader();
+		
+			if (filename.contains(".xml"))
+			{
+				System.out.println("Reading " + filename);
+				loader.readAndLoad(filename);
+			}
+		}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+		
+		/*	
+		
 		
 		// to read an entire directory
 		String dirname = null;
@@ -306,6 +336,7 @@ public class XMLLoader {
 		{
 			e.printStackTrace();
 		}
+		*/
 	}
 
 }

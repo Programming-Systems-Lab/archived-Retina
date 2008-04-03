@@ -81,14 +81,14 @@ public class MainPane extends javax.swing.JPanel {
 
         setName("MainPane");
         
-        buttonGroup = new javax.swing.ButtonGroup();
         centerPane = new javax.swing.JLayeredPane();
-        titleLabel = new javax.swing.JLabel();
         optionsPane = new javax.swing.JLayeredPane();
+        buttonGroup = new javax.swing.ButtonGroup();
         buttonBrowse = new javax.swing.JRadioButton();
         buttonEStat = new javax.swing.JRadioButton();
         buttonAStat = new javax.swing.JRadioButton();
         buttonSStat = new javax.swing.JRadioButton();
+        titleLabel = new javax.swing.JLabel();
         browseDescriptionLabel = new javax.swing.JLabel();
         assignmentDescriptionLabel = new javax.swing.JLabel();
         studentDescriptionLabel = new javax.swing.JLabel();
@@ -103,11 +103,18 @@ public class MainPane extends javax.swing.JPanel {
         setMaximumSize(new java.awt.Dimension(1000, 700));
         setMinimumSize(new java.awt.Dimension(1000, 700));
         setName("BrowsePane");
+        
+        projectLabel.setFont(new java.awt.Font("Britannic Bold", 1, 40));
+        projectLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        projectLabel.setText("RETINA VIEWER");
+        projectLabel.setBounds(315, 10, 380, 70);
+        centerPane.add(projectLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        
         titleLabel.setFont(new java.awt.Font("Verdana", 1, 24));
         titleLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         titleLabel.setLabelFor(centerPane);
         titleLabel.setText("MAIN MENU");
-        titleLabel.setBounds(380, 160, 190, 50);
+        titleLabel.setBounds(410, 160, 190, 50);
         centerPane.add(titleLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         optionsPane.setBackground(new java.awt.Color(152, 204, 255));
@@ -180,13 +187,13 @@ public class MainPane extends javax.swing.JPanel {
         errorDescriptionLabel.setBounds(450, 70, 370, 70);
         optionsPane.add(errorDescriptionLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        optionsPane.setBounds(100, 220, 830, 270);
+        optionsPane.setBounds(155, 220, 700, 270);
         centerPane.add(optionsPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         goButton.setFont(new java.awt.Font("Verdana", 1, 18));
         goButton.setText("Start");
         goButton.setActionCommand("start");
-        goButton.setBounds(410, 530, 130, 50);
+        goButton.setBounds(410, 530, 130, 30);
         centerPane.add(goButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         classLabel.setFont(new java.awt.Font("Verdana", 1, 30));
@@ -194,12 +201,6 @@ public class MainPane extends javax.swing.JPanel {
         classLabel.setBounds(370, 110, 240, 50);
         centerPane.add(classLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        projectLabel.setFont(new java.awt.Font("Britannic Bold", 1, 40));
-        projectLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        projectLabel.setText("RETINA VIEWER");
-        projectLabel.setBounds(290, 10, 380, 70);
-        centerPane.add(projectLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        
         buttonGroup.add(buttonBrowse);
         buttonGroup.add(buttonAStat);
         buttonGroup.add(buttonEStat);
@@ -259,18 +260,18 @@ public class MainPane extends javax.swing.JPanel {
         
         if(selectedButton.equals(browseString)){
              uimanager.showBrowsePane();
-       
-             
+     
         }
         else if (selectedButton.equals(estatString)){
             
             
         }
         else if (selectedButton.equals(astatString)){
+        	uimanager.showAssignPane();
             
             
         }
-       else if (selectedButton.equals(astatString)){
+       else if (selectedButton.equals(sstatString)){
             
             
         }

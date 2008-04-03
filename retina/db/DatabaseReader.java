@@ -44,5 +44,4 @@ public interface DatabaseReader
 	 * This method returns the number of successful compilations for a user on an assignment. 
 	 */
 	public int getNumberOfSuccessfulCompilations(String user, String assignment);
-	
-}
+	}

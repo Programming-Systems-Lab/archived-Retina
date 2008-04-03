@@ -13,14 +13,14 @@ package retina.common;
 public class CompilationEvent extends Event 
 {
 	/**
-	 * Whether or not this compilation was successful, i.e. no errors occurred.
+	 * The number of errors made during this compilation attempt.
 	 */
-	private boolean success;
+	private int errors;
 	
-	public CompilationEvent(String user, String assignment, String time, boolean s)
+	public CompilationEvent(String user, String assignment, String time, int e)
 	{
 		super(user, assignment, time);
-		success = s;
+		errors = e;
 	}
 	
 	/**
@@ -28,7 +28,22 @@ public class CompilationEvent extends Event
 	 */
 	public boolean isSuccessful()
 	{
-		return success;
+		return errors == 0;
+	}
+	
+	/**
+	 * Returns the number of errors that were made.
+	 */
+	public int getErrors()
+	{
+		return errors;
 	}
 
+	/**
+	 * Prints out the value of this object
+	 */
+	public String toString()
+	{
+		return user + " at " + time + " " + errors + " errors";
+	}
 }

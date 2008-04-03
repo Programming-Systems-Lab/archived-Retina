@@ -25,10 +25,14 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 
 import retina.common.CompilationErrorEvent;
-import retina.db.DatabaseManager;
+import retina.db.CompilationErrorEventManager;
 
 
 
+/**
+ * @author sh2503
+ *
+ */
 public class BrowsePane extends javax.swing.JPanel {
 
 
@@ -43,6 +47,8 @@ public class BrowsePane extends javax.swing.JPanel {
 
     private javax.swing.JLayeredPane centerPane;
 
+    private javax.swing.JLayeredPane statsPane;
+    
     private javax.swing.JLabel commonErrorLabel;
 
     private javax.swing.JLabel commonErrorLabelData;
@@ -54,8 +60,6 @@ public class BrowsePane extends javax.swing.JPanel {
     private javax.swing.JLayeredPane optionsPane;
 
     private javax.swing.JLabel selectedStudentLabel;
-
-    private javax.swing.JLayeredPane statsPane;
 
     private javax.swing.JLabel studentLabelData;
 
@@ -70,7 +74,11 @@ public class BrowsePane extends javax.swing.JPanel {
     private javax.swing.JLabel totalErrorsLabelData;
 
     private javax.swing.JLabel totalCompilationsLabel;
-
+    
+    private javax.swing.JLabel timeSpentLabel;
+    
+    private javax.swing.JLabel timeSpentLabelData;
+    
     private javax.swing.JLabel totalCompilationsLabelData;
 
     private javax.swing.JButton viewButton;
@@ -83,9 +91,9 @@ public class BrowsePane extends javax.swing.JPanel {
 
     private CompilationErrorEvent compileError;
 
-    private DatabaseManager dbmanager;
-
     private UserInterfaceManager uimanager;
+    
+    private CompilationErrorEventManager errorEventManager;
 
 
     /** Creates new form BrowsePane */
@@ -102,7 +110,7 @@ public class BrowsePane extends javax.swing.JPanel {
 
     private void initComponents() {
 
-        dbmanager = new DatabaseManager();
+        errorEventManager = new CompilationErrorEventManager();
 
         centerPane = new javax.swing.JLayeredPane();
 
@@ -133,6 +141,10 @@ public class BrowsePane extends javax.swing.JPanel {
         totalCompilationsLabel = new javax.swing.JLabel();
 
         totalCompilationsLabelData = new javax.swing.JLabel();
+        
+        timeSpentLabel = new javax.swing.JLabel();
+
+        timeSpentLabelData = new javax.swing.JLabel();
 
         backButton = new javax.swing.JButton();
 
@@ -149,6 +161,8 @@ public class BrowsePane extends javax.swing.JPanel {
         selectedID = "All";
 
         selectedAssignment = "1";
+        
+        tableScrollPane.setVisible(false);
 
         setBounds(new java.awt.Rectangle(0, 0, 1010, 740));
 
@@ -174,7 +188,7 @@ public class BrowsePane extends javax.swing.JPanel {
 
         optionsPane.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        assignmentCombo.setModel(new javax.swing.DefaultComboBoxModel(dbmanager.getAssignments()));
+        assignmentCombo.setModel(new javax.swing.DefaultComboBoxModel(errorEventManager.getAssignments()));
 
         assignmentCombo.setBounds(170, 20, 140, 20);
         optionsPane.add(assignmentCombo, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -211,40 +225,52 @@ public class BrowsePane extends javax.swing.JPanel {
         statsPane.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         totalCompilationsLabel.setFont(new java.awt.Font("Verdana", 1, 12));
-        totalCompilationsLabel.setLabelFor(optionsPane);
+        totalCompilationsLabel.setLabelFor(statsPane);
         totalCompilationsLabel.setText("Total Number of Compilations:");
-        totalCompilationsLabel.setBounds(20, 10, 200, 20);
+        totalCompilationsLabel.setBounds(10, 10, 210, 20);
         statsPane.add(totalCompilationsLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         totalCompilationsLabelData.setFont(new java.awt.Font("Verdana", 1, 12));
-        totalCompilationsLabelData.setLabelFor(optionsPane);
-        totalCompilationsLabelData.setText("0");
-        totalCompilationsLabelData.setBounds(240, 10, 200, 20);
+        totalCompilationsLabelData.setLabelFor(statsPane);
+        totalCompilationsLabelData.setText("");
+        totalCompilationsLabelData.setBounds(240, 10, 140, 20);
         statsPane.add(totalCompilationsLabelData, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
+        
         totalErrorsLabel.setFont(new java.awt.Font("Verdana", 1, 12));
-        totalErrorsLabel.setLabelFor(optionsPane);
+        totalErrorsLabel.setLabelFor(statsPane);
         totalErrorsLabel.setText("Total Number of Errors:");
-        totalErrorsLabel.setBounds(20, 40, 170, 20);
+        totalErrorsLabel.setBounds(10, 40, 200, 20);
         statsPane.add(totalErrorsLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         totalErrorsLabelData.setFont(new java.awt.Font("Verdana", 1, 12));
-        totalErrorsLabelData.setLabelFor(optionsPane);
-        totalErrorsLabelData.setBounds(190, 40, 520, 20);
+        totalErrorsLabelData.setLabelFor(statsPane);
+        totalErrorsLabelData.setBounds(190, 40, 70, 20);
         statsPane.add(totalErrorsLabelData, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
+        timeSpentLabel.setFont(new java.awt.Font("Verdana", 1, 12));
+        timeSpentLabel.setLabelFor(statsPane);
+        timeSpentLabel.setText("Time spent on assignment:");
+        timeSpentLabel.setBounds(250, 40, 190, 20);
+        statsPane.add(timeSpentLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        timeSpentLabelData.setFont(new java.awt.Font("Verdana", 1, 12));
+        timeSpentLabelData.setLabelFor(statsPane);
+        timeSpentLabelData.setText("");
+        timeSpentLabelData.setBounds(440, 40, 250, 20);
+        statsPane.add(timeSpentLabelData, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
         commonErrorLabel.setFont(new java.awt.Font("Verdana", 1, 12));
-        commonErrorLabel.setLabelFor(optionsPane);
+        commonErrorLabel.setLabelFor(statsPane);
         commonErrorLabel.setText("Most Common Error:");
-        commonErrorLabel.setBounds(20, 60, 170, 20);
+        commonErrorLabel.setBounds(10, 70, 170, 20);
         statsPane.add(commonErrorLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         commonErrorLabelData.setFont(new java.awt.Font("Verdana", 1, 12));
-        commonErrorLabelData.setLabelFor(optionsPane);
-        commonErrorLabelData.setBounds(190, 60, 550, 20);
+        commonErrorLabelData.setLabelFor(statsPane);
+        commonErrorLabelData.setBounds(190, 70, 550, 20);
         statsPane.add(commonErrorLabelData, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        statsPane.setBounds(20, 610, 730, 80);
+        statsPane.setBounds(20, 600, 730, 100);
         centerPane.add(statsPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         backButton.setFont(new java.awt.Font("Verdana", 1, 11));
@@ -278,7 +304,7 @@ public class BrowsePane extends javax.swing.JPanel {
 
         studentList.setModel(new javax.swing.AbstractListModel() {
 
-            String[] strings = dbmanager.getStudents();
+            String[] strings = errorEventManager.getStudents();
 
             public int getSize() { return strings.length; }
 
@@ -393,7 +419,7 @@ public class BrowsePane extends javax.swing.JPanel {
          JComboBox cb = (JComboBox) evt.getSource();
 
          selectedAssignment = (String)cb.getSelectedItem();
-
+         
     }
 
 
@@ -430,7 +456,16 @@ public class BrowsePane extends javax.swing.JPanel {
 
             viewButton.setEnabled(true);
 
-            updateData(id, assignment);
+            if(id.equals("All"))
+            {
+            	
+                JOptionPane.showMessageDialog(this, "Please select a student ID");
+            }
+            else
+            {
+            
+            	updateData(id, assignment);
+            }
 
         }
 
@@ -447,6 +482,24 @@ public class BrowsePane extends javax.swing.JPanel {
         if("back".equals(evt.getActionCommand())){
 
             backButton.setEnabled(true);
+            
+            studentLabelData.setText("");
+            
+            selectedID = "All";
+            
+            selectedAssignment = "1";
+        	 
+    	    commonErrorLabelData.setText("");
+
+    	    totalErrorsLabelData.setText("");
+    	    
+    	    totalCompilationsLabelData.setText("");
+    	    
+    	    timeSpentLabelData.setText("");
+
+    	    assignmentCombo.setSelectedIndex(0); 
+               
+            centerPane.remove(tableScrollPane);
 
             uimanager.showMainPane();
 
@@ -473,30 +526,30 @@ public class BrowsePane extends javax.swing.JPanel {
 
     private void updateData(String id, String assignment){
 
-        // dataTable.setModel(new DBTableModel(id, assignment));
 
         try {
-
-            CompilationErrorEvent[] errors = dbmanager.getCompilationErrorEvents(id, assignment);
+            CompilationErrorEvent[] errors = errorEventManager.getCompilationErrorEvents(id, assignment);
             if(errors == null)
             {
                 //dataTable.setModel(new DBTableModel(dbmanager.getCompilationErrorEvents(id, assignment)));
-                JOptionPane.showMessageDialog(this, "No data available for selected student and assignment.");
+                JOptionPane.showMessageDialog(this, "No data available for selected student and assignment");
                 compileError = null;
             }
             else
             {
-                compileError = dbmanager.getMostCommonCompilationError(id, assignment);
+                compileError = errorEventManager.getMostCommonCompilationError(id, assignment);
             }
 
             dbtable = new DBTableModel(errors);
             dataTable.setModel(dbtable);
+            tableScrollPane.setVisible(true);
 
             if(compileError != null)
             {
 
                 commonErrorLabelData.setText(compileError.getError());
                 totalErrorsLabelData.setText(Integer.toString(dbtable.getRowCount()));
+                
             }
             else
             {
@@ -505,9 +558,18 @@ public class BrowsePane extends javax.swing.JPanel {
                 totalErrorsLabelData.setText("");
             }
             
-            String totalCompilations = Integer.toString(dbmanager.getTotalNumberOfCompilations(id, assignment));
-            String successfulCompilations = Integer.toString(dbmanager.getNumberOfSuccessfulCompilations(id, assignment));
+            String totalCompilations = Integer.toString(errorEventManager.getTotalNumberOfCompilations(id, assignment));
+            String successfulCompilations = Integer.toString(errorEventManager.getNumberOfSuccessfulCompilations(id, assignment));
             totalCompilationsLabelData.setText(totalCompilations + "  (" + successfulCompilations + " successful)");
+            
+            DateConverter dc = new DateConverter();
+            long[] workTime = dc.computeWorkTime(errorEventManager.getCompilationEvents(id, assignment));
+            if(workTime[0] == 0){
+            	timeSpentLabelData.setText("Less Than 1 Hour");
+            }
+            else{
+            	timeSpentLabelData.setText("Approx. " + (int)workTime[0] + " hrs. and " + (int)workTime[1] + " mins.");
+            }
 
 
         } catch (Exception ex) {

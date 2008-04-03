@@ -11,9 +11,9 @@ import retina.common.Event;
 
 public class DBTableModel extends AbstractTableModel
 {
-    private String[] columnNames = {"Error", "Message", "Time"}; 
+    private String[] columnNames = {"Error", "Message", "Time", "File", "Line"}; 
     private Object[][] data;
-    final int COLUMN_MAX = 3; 
+    final int COLUMN_MAX = 5; 
     
     /*CONSTRUCTOR METHODS*/
     /** 
@@ -54,6 +54,8 @@ public class DBTableModel extends AbstractTableModel
             data[row][col++] = ce[row].getError(); 
             data[row][col++] = ce[row].getMessage(); 
             data[row][col++] = ce[row].getTime(); 
+            data[row][col++] = ce[row].getFile(); 
+            data[row][col++] = ce[row].getLine(); 
             // data[row][col++] = ce[row].getUser(); 
             col = 0; 
            

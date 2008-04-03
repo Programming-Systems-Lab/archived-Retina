@@ -10,6 +10,9 @@ import java.io.*;
 import java.net.*;
 import java.util.Scanner;
 
+import retina.im.MessageSender;
+import retina.common.Logger;
+
 
 public class XmlServer extends Thread
 {
@@ -116,6 +119,8 @@ public class XmlServer extends Thread
     	    // the input stream for reading from the network
     	    Scanner in = null; 
 
+    	    String fileName = null;
+    	    
     	    try
     		{
     			//System.out.println("Connection established");
@@ -124,7 +129,8 @@ public class XmlServer extends Thread
     			in = new Scanner(socket.getInputStream());
 
     			// the name of the file should be on the first line
-    			String fileName = "_" + in.nextLine();
+    			// TODO: make this configurable
+    			fileName = "D:/Retina/inbox/_" + in.nextLine();
     			//System.out.println("File is " + fileName);
     			
     			// create the File object
@@ -164,6 +170,7 @@ public class XmlServer extends Thread
     		catch (Exception e)
     		{
     			e.printStackTrace();
+    			if (Logger.isLogError()) Logger.logError("Error loading " + fileName + ": " + e.toString());
     		}
     		finally
     		{

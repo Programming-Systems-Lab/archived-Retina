@@ -48,6 +48,40 @@ public class Logger
 		log(errorLogFile, msg);
 	}
 	
+	public static void logError(Event e, Exception ex)
+	{
+		if (errorLogFile == null)
+		{
+			// TODO: backup the original
+			try { errorLogFile = new PrintWriter(new File(ERROR_LOG)); }
+			catch (Exception ee) { }
+		}
+		
+		String output = "Error on event " + e.toString() + ":\n";
+		output += ex.toString() + "\n";
+		StackTraceElement[] elements = ex.getStackTrace();
+		for (StackTraceElement element : elements) 
+			output += element + "\n";
+		log(errorLogFile, output);
+	}
+
+	
+	public static void logError(Exception ex)
+	{
+		if (errorLogFile == null)
+		{
+			// TODO: backup the original
+			try { errorLogFile = new PrintWriter(new File(ERROR_LOG)); }
+			catch (Exception ee) { }
+		}
+		
+		String output = ex.toString() + "\n";
+		StackTraceElement[] elements = ex.getStackTrace();
+		for (StackTraceElement element : elements) 
+			output += element + "\n";
+		log(errorLogFile, output);
+	}
+	
 	public static void logWarning(String msg)
 	{
 		if (warningLogFile == null)

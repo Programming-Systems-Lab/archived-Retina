@@ -6,6 +6,8 @@ package retina.db;
 import java.sql.*;
 import java.util.ArrayList;
 
+import retina.common.Logger;
+
 
 public class LoginEventManager extends DatabaseManager
 {	// Constructor	public LoginEventManager(){}
@@ -29,7 +31,8 @@ public class LoginEventManager extends DatabaseManager
 				
 				return true;
             }            else System.out.println("Error: No active Connection");
-        }        catch(Exception e)        {			e.printStackTrace();		}
+        }        catch(Exception e)        {			e.printStackTrace();			if (Logger.isLogError()) Logger.logError(e);
+		}
 		finally
 		{
 			closeConnection();

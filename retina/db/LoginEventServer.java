@@ -10,6 +10,7 @@ import java.io.*;
 import java.net.*;
 import java.util.Scanner;
 
+import retina.common.Logger;
 import retina.im.MessageSender;
 
 
@@ -120,6 +121,7 @@ public class LoginEventServer extends Thread
     		catch (Exception e)
     		{
     			e.printStackTrace();
+    			if (Logger.isLogError()) Logger.logError(e);
     		}
     		finally
     		{

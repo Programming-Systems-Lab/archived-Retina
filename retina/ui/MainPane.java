@@ -10,13 +10,13 @@ import java.awt.event.*;
 
 public class MainPane extends javax.swing.JPanel {
     
-  private javax.swing.JLabel assignmentDescriptionLabel;
+  private javax.swing.JLabel classDescriptionLabel;
   private javax.swing.JLabel studentDescriptionLabel;
   private javax.swing.JLabel browseDescriptionLabel;
-  private javax.swing.JLabel errorDescriptionLabel;
-  private javax.swing.JRadioButton buttonAStat;
+  private javax.swing.JLabel runDescriptionLabel;
+  private javax.swing.JRadioButton buttonCStat;
   private javax.swing.JRadioButton buttonBrowse;
-  private javax.swing.JRadioButton buttonEStat;
+  private javax.swing.JRadioButton buttonRStat;
   private javax.swing.ButtonGroup buttonGroup;
   private javax.swing.JRadioButton buttonSStat;
   private javax.swing.JLayeredPane centerPane;
@@ -25,7 +25,7 @@ public class MainPane extends javax.swing.JPanel {
   private javax.swing.JLayeredPane optionsPane;
   private javax.swing.JLabel projectLabel;
   private javax.swing.JLabel titleLabel;
-  private String browseString = "browse", astatString = "astat", estatString = "estat", sstatString = "sstat"; 
+  private String browseString = "browse", cstatString = "cstat", rstatString = "rstat", sstatString = "sstat"; 
   private ActionListener buttonListener; 
   private UserInterfaceManager uimanager; 
   private String selectedButton; 
@@ -51,19 +51,19 @@ public class MainPane extends javax.swing.JPanel {
         
         buttonBrowse = new javax.swing.JRadioButton();
         
-        buttonEStat = new javax.swing.JRadioButton();
+        buttonRStat = new javax.swing.JRadioButton();
         
-        buttonAStat = new javax.swing.JRadioButton();
+        buttonCStat = new javax.swing.JRadioButton();
         
         buttonSStat = new javax.swing.JRadioButton();
         
         browseDescriptionLabel = new javax.swing.JLabel();
         
-        assignmentDescriptionLabel = new javax.swing.JLabel();
+        classDescriptionLabel = new javax.swing.JLabel();
         
         studentDescriptionLabel = new javax.swing.JLabel();
         
-        errorDescriptionLabel = new javax.swing.JLabel();
+        runDescriptionLabel = new javax.swing.JLabel();
         
         goButton = new javax.swing.JButton();
         
@@ -85,14 +85,14 @@ public class MainPane extends javax.swing.JPanel {
         optionsPane = new javax.swing.JLayeredPane();
         buttonGroup = new javax.swing.ButtonGroup();
         buttonBrowse = new javax.swing.JRadioButton();
-        buttonEStat = new javax.swing.JRadioButton();
-        buttonAStat = new javax.swing.JRadioButton();
+        buttonRStat = new javax.swing.JRadioButton();
+        buttonCStat = new javax.swing.JRadioButton();
         buttonSStat = new javax.swing.JRadioButton();
         titleLabel = new javax.swing.JLabel();
         browseDescriptionLabel = new javax.swing.JLabel();
-        assignmentDescriptionLabel = new javax.swing.JLabel();
+        classDescriptionLabel = new javax.swing.JLabel();
         studentDescriptionLabel = new javax.swing.JLabel();
-        errorDescriptionLabel = new javax.swing.JLabel();
+        runDescriptionLabel = new javax.swing.JLabel();
         goButton = new javax.swing.JButton();
         classLabel = new javax.swing.JLabel();
         projectLabel = new javax.swing.JLabel();
@@ -132,23 +132,23 @@ public class MainPane extends javax.swing.JPanel {
         optionsPane.add(buttonBrowse, javax.swing.JLayeredPane.DEFAULT_LAYER);
         buttonBrowse.getAccessibleContext().setAccessibleParent(optionsPane);
 
-        buttonEStat.setFont(new java.awt.Font("Tahoma", 1, 18));
-        buttonEStat.setText("Error Stats");
-        buttonEStat.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        buttonEStat.setContentAreaFilled(false);
-        buttonEStat.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        buttonEStat.setBounds(450, 30, 200, 40);
-        buttonEStat.setActionCommand(estatString);
-        optionsPane.add(buttonEStat, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        buttonRStat.setFont(new java.awt.Font("Tahoma", 1, 18));
+        buttonRStat.setText("Runtime Stats");
+        buttonRStat.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        buttonRStat.setContentAreaFilled(false);
+        buttonRStat.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        buttonRStat.setBounds(450, 30, 200, 40);
+        buttonRStat.setActionCommand(rstatString);
+        optionsPane.add(buttonRStat, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        buttonAStat.setFont(new java.awt.Font("Verdana", 1, 18));
-        buttonAStat.setText("Assignment Stats");
-        buttonAStat.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        buttonAStat.setContentAreaFilled(false);
-        buttonAStat.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        buttonAStat.setBounds(20, 150, 200, 40);
-        buttonAStat.setActionCommand(astatString);
-        optionsPane.add(buttonAStat, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        buttonCStat.setFont(new java.awt.Font("Verdana", 1, 18));
+        buttonCStat.setText("Class Stats");
+        buttonCStat.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        buttonCStat.setContentAreaFilled(false);
+        buttonCStat.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        buttonCStat.setBounds(20, 150, 200, 40);
+        buttonCStat.setActionCommand(cstatString);
+        optionsPane.add(buttonCStat, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         buttonSStat.setFont(new java.awt.Font("Verdana", 1, 18));
         buttonSStat.setText("Student Stats");
@@ -166,12 +166,12 @@ public class MainPane extends javax.swing.JPanel {
         browseDescriptionLabel.setBounds(20, 70, 370, 70);
         optionsPane.add(browseDescriptionLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        assignmentDescriptionLabel.setFont(new java.awt.Font("Verdana", 2, 12));
-        assignmentDescriptionLabel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        assignmentDescriptionLabel.setText("View statistics on each assignment");
-        assignmentDescriptionLabel.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        assignmentDescriptionLabel.setBounds(20, 190, 370, 70);
-        optionsPane.add(assignmentDescriptionLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        classDescriptionLabel.setFont(new java.awt.Font("Verdana", 2, 12));
+        classDescriptionLabel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        classDescriptionLabel.setText("View graphs and tables for the entire class");
+        classDescriptionLabel.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        classDescriptionLabel.setBounds(20, 190, 370, 70);
+        optionsPane.add(classDescriptionLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         studentDescriptionLabel.setFont(new java.awt.Font("Verdana", 2, 12));
         studentDescriptionLabel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -180,12 +180,12 @@ public class MainPane extends javax.swing.JPanel {
         studentDescriptionLabel.setBounds(450, 190, 370, 70);
         optionsPane.add(studentDescriptionLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        errorDescriptionLabel.setFont(new java.awt.Font("Verdana", 2, 12));
-        errorDescriptionLabel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        errorDescriptionLabel.setText("View statistics on specific errors");
-        errorDescriptionLabel.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        errorDescriptionLabel.setBounds(450, 70, 370, 70);
-        optionsPane.add(errorDescriptionLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        runDescriptionLabel.setFont(new java.awt.Font("Verdana", 2, 12));
+        runDescriptionLabel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        runDescriptionLabel.setText("View data on runtime errors");
+        runDescriptionLabel.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        runDescriptionLabel.setBounds(450, 70, 370, 70);
+        optionsPane.add(runDescriptionLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         optionsPane.setBounds(155, 220, 700, 270);
         centerPane.add(optionsPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -202,8 +202,8 @@ public class MainPane extends javax.swing.JPanel {
         centerPane.add(classLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         buttonGroup.add(buttonBrowse);
-        buttonGroup.add(buttonAStat);
-        buttonGroup.add(buttonEStat);
+        buttonGroup.add(buttonCStat);
+        buttonGroup.add(buttonRStat);
         buttonGroup.add(buttonSStat);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -226,8 +226,8 @@ public class MainPane extends javax.swing.JPanel {
         };
         
         buttonBrowse.addActionListener(buttonListener);
-        buttonAStat.addActionListener(buttonListener);
-        buttonEStat.addActionListener(buttonListener);
+        buttonCStat.addActionListener(buttonListener);
+        buttonRStat.addActionListener(buttonListener);
         buttonSStat.addActionListener(buttonListener); 
         
         goButton.addActionListener(new ActionListener()
@@ -262,18 +262,18 @@ public class MainPane extends javax.swing.JPanel {
              uimanager.showBrowsePane();
      
         }
-        else if (selectedButton.equals(estatString)){
-            
+        else if (selectedButton.equals(rstatString)){
+        	uimanager.showRuntimePane();
             
         }
-        else if (selectedButton.equals(astatString)){
-        	uimanager.showAssignPane();
+        else if (selectedButton.equals(cstatString)){
+        	uimanager.showClassPane();
             
             
         }
        else if (selectedButton.equals(sstatString)){
-            
-            
+    	   uimanager.showStudentPane(); 
+           
         }
    
     }

@@ -611,6 +611,7 @@ public class BrowsePane extends javax.swing.JPanel {
                 new BrowsePane(new UserInterfaceManager()).setVisible(true);
             }
         });
+
     }
 
 }

@@ -10,6 +10,8 @@ package retina.db;
 import java.sql.*;
 import java.util.ArrayList;
 
+import retina.common.Logger;
+
 
 public class DatabaseManager extends DatabaseConnector
 {	// Constructor	public DatabaseManager(){}
@@ -35,7 +37,8 @@ public class DatabaseManager extends DatabaseConnector
 				
 				return true;
             }            else System.out.println("Error: No active Connection");
-        }        catch(Exception e)        {			e.printStackTrace();		}
+        }        catch(Exception e)        {			e.printStackTrace();			if (Logger.isLogError()) Logger.logError(e);
+		}
 		finally
 		{
 			closeConnection();
@@ -88,6 +91,7 @@ public class DatabaseManager extends DatabaseConnector
         catch(Exception e)
         {
 			e.printStackTrace();
+			if (Logger.isLogError()) Logger.logError(e);
 		}
 		finally
 		{
@@ -141,6 +145,7 @@ public class DatabaseManager extends DatabaseConnector
 		catch(Exception e)
 		{
 			e.printStackTrace();
+			if (Logger.isLogError()) Logger.logError(e);
 		}
 		finally
 		{
@@ -179,6 +184,7 @@ public class DatabaseManager extends DatabaseConnector
 		catch(Exception e)
 		{
 			e.printStackTrace();
+			if (Logger.isLogError()) Logger.logError(e);
 		}
 		finally
 		{
@@ -231,6 +237,7 @@ public class DatabaseManager extends DatabaseConnector
 		catch(Exception e)
 		{
 			e.printStackTrace();
+			if (Logger.isLogError()) Logger.logError(e);
 		}
 		finally
 		{
@@ -239,5 +246,10 @@ public class DatabaseManager extends DatabaseConnector
 		return null;
 	}
 
-
+	public static void main(String[] args)
+	{
+		DatabaseManager m = new DatabaseManager();
+		m.insertStudent("foo", "bar");
+		
+	}
 }

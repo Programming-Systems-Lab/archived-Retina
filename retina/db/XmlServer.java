@@ -19,9 +19,6 @@ public class XmlServer extends Thread
     // the server
     private ServerSocket server;
 
-    // the tool for writing to the database
-    private XMLLoader loader;
-    
     // used for sending messages
     private MessageSender sender;
 
@@ -49,14 +46,12 @@ public class XmlServer extends Thread
     public XmlServer(int port)
     {
     	sender = new MessageSender();
-    	loader = new XMLLoader(sender);
     	init(port);
     }
 
     public XmlServer(int port, MessageSender ms)
     {
     	sender = ms;
-    	loader = new XMLLoader(sender);
     	init(port);
     }
 
@@ -71,6 +66,7 @@ public class XmlServer extends Thread
 		{
 		    System.out.println("Cannot create XmlServer!");
 		    e.printStackTrace();
+			if (Logger.isLogError()) Logger.logError(e);
 		}
     }
     
@@ -95,6 +91,7 @@ public class XmlServer extends Thread
     		catch (Exception e)
     		{
     			e.printStackTrace();
+    			if (Logger.isLogError()) Logger.logError(e);
     		}
     	}
     }
@@ -105,7 +102,11 @@ public class XmlServer extends Thread
     class Handler extends Thread
     {
     	Socket socket = null;
-    	
+
+    	// the tool for writing to the database
+    	// each thread should have its own because the XMLLoader is not threadsafe
+        XMLLoader loader = new XMLLoader(sender);
+        
     	Handler(Socket s)
     	{
     		socket = s;
@@ -170,7 +171,7 @@ public class XmlServer extends Thread
     		catch (Exception e)
     		{
     			e.printStackTrace();
-    			if (Logger.isLogError()) Logger.logError("Error loading " + fileName + ": " + e.toString());
+    			if (Logger.isLogError()) Logger.logError(e);
     		}
     		finally
     		{

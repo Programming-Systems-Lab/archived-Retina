@@ -7,6 +7,7 @@ package retina.ui;
 import javax.swing.table.AbstractTableModel;
 
 import retina.common.CompilationErrorEvent;
+import retina.common.RuntimeErrorEvent;
 import retina.common.Event;
 
 public class DBTableModel extends AbstractTableModel
@@ -61,6 +62,20 @@ public class DBTableModel extends AbstractTableModel
            
         }
        }
+        else if (e instanceof RuntimeErrorEvent[]){
+        	RuntimeErrorEvent[] ce = (RuntimeErrorEvent[])e; 
+            data = new Object[ce.length][COLUMN_MAX];
+            for(row = 0; row < ce.length; row++){    
+                data[row][col++] = ce[row].getError(); 
+                data[row][col++] = ce[row].getMessage(); 
+                data[row][col++] = ce[row].getTime(); 
+                data[row][col++] = ce[row].getFile(); 
+                data[row][col++] = ce[row].getLine(); 
+                // data[row][col++] = ce[row].getUser(); 
+                col = 0; 
+               
+            }
+           }
        else if (e == null){
             data = new Object[1][COLUMN_MAX];
             data[0][col++] = ""; 

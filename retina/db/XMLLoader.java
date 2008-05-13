@@ -3,6 +3,8 @@ package retina.db;
 /**
  * This class contains methods for reading an XML file from disk, creating the necessary Events,
  * and then using the DatabaseManager to insert those into the database.
+ * 
+ * This class is NOT threadsafe; each thread should have its own instance.
  */
 
 import java.io.IOException;
@@ -20,20 +22,33 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import retina.common.CompilationErrorEvent; 
+import retina.common.RuntimeErrorEvent; 
 import retina.common.CompilationEvent; 
+import retina.common.Event; 
 import retina.common.Logger;
 import retina.im.MessageSender;
 
 public class XMLLoader {
 
+	private static final String ASSIGNMENT = "4";
+	
 	// the Document object
 	private Document dom;
 
 	// the set of objects that need to be inserted into the database
-	private ArrayList<CompilationErrorEvent> events;
+	private ArrayList<Event> events;
 	
 	// used for sending messages
 	private MessageSender sender;
+	
+	// for database stuff
+	private CompilationErrorEventManager compilationManager = new CompilationErrorEventManager();
+	private RuntimeErrorEventManager runtimeManager = new RuntimeErrorEventManager();
+	
+	// to indicate the type of events being loaded
+	private int type = 0;
+	private static final int COMPILATION_ERROR = 1;
+	private static final int RUNTIME_ERROR = 2;
 
 	public XMLLoader()
 	{
@@ -53,7 +68,7 @@ public class XMLLoader {
 	public void readAndLoad(String file) { 
 
 		// reset the list of events
-		events = new ArrayList<CompilationErrorEvent>();
+		events = new ArrayList<Event>();
 		
 		//parse the xml file and get the dom object
 		parseXmlFile(file);
@@ -61,13 +76,24 @@ public class XMLLoader {
 		//get each element and create objects
 		parseDocument();
 
-		// now write all the compilation error events to the database
-		CompilationErrorEventManager mgr = new CompilationErrorEventManager();
-		for (CompilationErrorEvent event : events)
+		if (type == COMPILATION_ERROR)
 		{
-			mgr.insertCompilationErrorEvent(event);
-			//System.out.println("Inserted " + event);
+			// now write all the compilation error events to the database
+			for (Event event : events)
+			{
+				compilationManager.insertCompilationErrorEvent((CompilationErrorEvent)event);
+			}
 		}
+		else if (type == RUNTIME_ERROR)
+		{
+			// and then the runtime errors
+			for (Event event : events)
+			{
+				boolean success = runtimeManager.insertRuntimeErrorEvent((RuntimeErrorEvent)event);
+				if (success && Logger.isLogInfo()) Logger.logInfo("Inserted " + event);
+			}
+		}
+		
 
 		// now send a message to the student - temporarily disabled!
 		/*
@@ -124,16 +150,21 @@ public class XMLLoader {
 
 		//get a nodelist of <metric> elements
 		NodeList nl = docEle.getElementsByTagName("metric");
-		if(nl != null && nl.getLength() > 0) {
+		if (nl != null && nl.getLength() > 0) 
+		{
+			// first figure out what type it is
+			Element e = (Element)nl.item(0);
+			String metricType = e.getAttribute("name");
+			if (metricType.equals("compilation_errors")) type = COMPILATION_ERROR;
+			else if (metricType.equals("runtime_errors")) type = RUNTIME_ERROR;
+			
 			for(int i = 0 ; i < nl.getLength();i++) {
-
 				//get the element
 				Element el = (Element)nl.item(i);
 				// create the objects and put them in the "events" ArrayList
 				createObjects(el);
 			}
 		}
-
 	}
 
 
@@ -196,7 +227,7 @@ public class XMLLoader {
 		}
 
 		// TODO: how do we get the assignment?
-		if (assignment == null) assignment = "3";
+		if (assignment == null) assignment = ASSIGNMENT;
 
 		// tracks the number of errors made
 		int errors = 0;
@@ -218,18 +249,27 @@ public class XMLLoader {
 				//System.out.println("error: " + error.trim());
 				//System.out.println("message: " + message.trim());
 
-				CompilationErrorEvent errComp = new CompilationErrorEvent(user, assignment, timeFormat, error, message, file, line);
-				events.add(errComp);
+				// figure out what type of event it is before putting it in the array list
+				Event event = null;
+				if (type == COMPILATION_ERROR)
+					event = new CompilationErrorEvent(user, assignment, timeFormat, error, message, file, line);
+				else if (type == RUNTIME_ERROR)
+					event = new RuntimeErrorEvent(user, assignment, timeFormat, error, message, file, line);
+				events.add(event);
 
 				errors++;
 			}
 
 		}
 
-		// now record the fact that a compilation occurred
-		CompilationEvent ce = new CompilationEvent(user, assignment, timeFormat, errors);
-		new CompilationEventManager().insertCompilationEvent(ce);
-		if (Logger.isLogInfo()) Logger.logInfo("Inserted " + ce);
+		// if it's a compilation event, we need to record that 
+		if (type == COMPILATION_ERROR)
+		{
+			// now record the fact that a compilation occurred
+			CompilationEvent ce = new CompilationEvent(user, assignment, timeFormat, errors);
+			boolean success = compilationManager.insertCompilationEvent(ce);
+			if (success && Logger.isLogInfo()) Logger.logInfo("Inserted " + ce);
+		}
 
 	}
 
@@ -264,7 +304,7 @@ public class XMLLoader {
 	{
 
 		// this is for reading one file at a time
-		String filename = "..\\inbox\\_mja2128-PrimeNumber.java-02-12-02-03-00.xml";
+		String filename = "..\\test.xml";
 		/*
 		if (args.length == 0)
 		{

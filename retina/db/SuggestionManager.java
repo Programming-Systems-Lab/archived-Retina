@@ -1,5 +1,7 @@
 package retina.db;
 import java.sql.*;
+
+import retina.common.Logger;
 import retina.common.Student;
 
 /***********************************************************************************
@@ -51,6 +53,7 @@ public class SuggestionManager extends DatabaseManager
         catch(Exception e)
         {
 			e.printStackTrace();
+			if (Logger.isLogError()) Logger.logError(e);
 		}
 		finally
 		{

@@ -1,6 +1,8 @@
 package retina.ui;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.text.*;
 
 import retina.common.CompilationEvent;
@@ -10,21 +12,55 @@ public class DateConverter {
 	private final int timeCap = 3600;		 //units = "seconds"
 	private long workTime = 0;
 	private DateFormat formatter; 
+	private Pattern datePattern1, datePattern2;
+	private String dateRegex1, dateRegex2; 
 	
+	public DateConverter(){
+		dateRegex1 = "\\d{1,2}-\\d{1,2}\\s\\d{1,2}:\\d{1,2}";
+		dateRegex2 = "\\d{4}-\\d{1,2}-\\d{1,2}\\s\\d{1,2}:\\d{1,2}:\\d{1,2}\\.\\d";
+
+		datePattern1 = Pattern.compile(dateRegex1); //2-8 18:00
+		datePattern2 = Pattern.compile(dateRegex2); //2008-02-08 12:51:23.0
+		
+		
+	}
 	public int dateToInt(String date){
-		StringTokenizer st = new StringTokenizer(date, "\\d-\\d \\d:\\d");
-	    String newdate = "";
-	    while(st.hasMoreTokens()){
-	        String temp = st.nextToken();
-	       if(temp.length() < 2){
-	        	temp = "0" + temp; 
-	        }
-	        newdate += temp;
+		Matcher m1 = datePattern1.matcher(date);
+		Matcher m2 = datePattern2.matcher(date);
+		
+		if(m1.matches()){
+			StringTokenizer st = new StringTokenizer(date, "\\d-\\d \\d:\\d");
+			String newdate = "";
+			while(st.hasMoreTokens()){
+				String temp = st.nextToken();
+				if(temp.length() < 2){
+					temp = "0" + temp; 
+				}
+				newdate += temp;
 	        
 	        
-	    }
-	    
-	    return Integer.parseInt(newdate);
+				}
+			return Integer.parseInt(newdate);
+		}
+		else if(m2.matches()){
+				StringTokenizer st = new StringTokenizer(date, "\\d-\\d-\\d \\d:\\d:\\d");
+				String newdate = "";
+				while(st.hasMoreTokens()){
+					String temp = st.nextToken();		
+					if(!temp.matches("\\d{4}")){
+						if(temp.length() < 2){
+							temp = "0" + temp; 
+						}
+						newdate += temp;
+					}
+				}
+				newdate = newdate.substring(0, 10);
+				return Integer.parseInt(newdate);
+				
+		}
+		else{ 
+			return 0; 
+		}
 	    
 	}
 	
